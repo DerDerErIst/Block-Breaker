@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 069a70c3ef8e05b458091afec4a0a5fb
+timeCreated: 1517138218
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Qbicle1BRKMKinv
+  fontNames:
+  - Qbicle1BRKMKinv
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
