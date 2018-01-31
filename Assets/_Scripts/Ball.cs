@@ -46,24 +46,17 @@ public class Ball : MonoBehaviour {
         {
             float x = hitFactor(transform.position, collision.transform.position, collision.collider.bounds.size.x);
             Vector2 dir = new Vector2(x*10, 10);
-            //Set velocity with dir * 70f;
             rb.velocity = dir;
+        }
+        if (collision.gameObject.tag == "Collider")
+        {
+            audioSource.PlayOneShot(clip[Random.Range(0, clip.Length)]);
         }
     }
     float hitFactor(Vector2 ballPos, Vector2 paddlePos, float paddleWidth)
     {
         return (ballPos.x - paddlePos.x) / paddleWidth;
     }
-
-    /*private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Vector2 tweak = new Vector2(Random.Range(0f, .2f), Random.Range(0f, .4f));
-        rb.velocity += tweak;
-        if (hasStarted)
-        {
-            audioSource.PlayOneShot(clip[Random.Range(0, clip.Length)]);
-        }
-    }*/
 
     public void ResetBallPosition()
     {

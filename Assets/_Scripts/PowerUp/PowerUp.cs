@@ -6,9 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PowerUp", menuName = "PowerUp")]
 public class PowerUp : ScriptableObject {
 
-    [Header("Leave Paddle Empty")]
-    public Paddle paddle;
-
     [Header("Start Here")]
     public GameObject pickUp;
 
@@ -16,6 +13,5 @@ public class PowerUp : ScriptableObject {
 
     public virtual void Use()
     {
-        paddle = GameObject.FindObjectOfType<Paddle>();
     }
 }

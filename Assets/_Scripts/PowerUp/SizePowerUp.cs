@@ -6,12 +6,12 @@ using UnityEngine;
 public class SizePowerUp : PowerUp
 {
 
-    public float time;
-    public float size;
+    [SerializeField] float time;
+    [SerializeField] float size;
 
     public override void Use()
     {
         base.Use();
-        paddle.IncreaseSize(time, size);
+        Paddle.paddleInstance.IncreaseSize(time, size);
     }
 }

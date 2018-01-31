@@ -16,7 +16,7 @@ public class Paddle : MonoBehaviour {
 
     [SerializeField] bool autoPlay = false;
     public static int lives = 3;
-    public static int highscore = 0;
+    public static int score = 0;
     public bool isShooter;
 
     public Text liveText;
@@ -27,24 +27,16 @@ public class Paddle : MonoBehaviour {
     public GameObject rightWeapon;
     public GameObject projectile;
 
-    public float fireRate;
 
+    float fireRate;
     float nextFire;
+    Ball ball;
 
-    private Ball ball;
-	// Use this for initialization
 	void Start ()
-    {
-        
-        highscoreText.text = highscore.ToString();
+    {       
+        highscoreText.text = score.ToString();
         liveText.text = lives.ToString();
         ball = GameObject.FindObjectOfType<Ball>();
-    }
-
-    private static void Reset()
-    {
-        lives = 3;
-        highscore = 0;
     }
 
     // Update is called once per frame
@@ -52,16 +44,15 @@ public class Paddle : MonoBehaviour {
     {
         if(isShooter)
         {            
-            if (Input.GetKey(KeyCode.Space) && Time.time > nextFire)
+            if (Input.GetKeyDown(KeyCode.Space) && Time.time > nextFire)
             {
                 nextFire = Time.time + fireRate;
-                FireOne();
-                FireTwo();
+                Fire();
             }
         }
         
 
-
+        //For Playtesting
         if (Input.GetKeyDown(KeyCode.W))
         {
             SetShooter(5, projectile, 1);
@@ -88,14 +79,11 @@ public class Paddle : MonoBehaviour {
         }
     }
 
-    void FireOne()
+    void Fire()
     {
         Instantiate(projectile, leftWeapon.transform.position, Quaternion.identity);
-    }
-
-    void FireTwo()
-    {
         Instantiate(projectile, rightWeapon.transform.position, Quaternion.identity);
+
     }
 
     private void AutoPlay()
@@ -132,13 +120,27 @@ public class Paddle : MonoBehaviour {
 
     public void IncreaseSize(float time, float size)
     {
+        if(transform.localScale.x <= 4 && transform.localScale.x >= 0.5f)
         this.transform.localScale = new Vector3(transform.localScale.x * size, transform.localScale.y, transform.localScale.z);
-        CancelInvoke();
+        CancelInvoke("normalSize");
         Invoke("normalSize", time);
         
     }
+
     void normalSize()
     {
-        this.transform.localScale = new Vector3(2f, 1f, transform.localScale.z);
+        this.transform.localScale = new Vector3(2f, transform.localScale.y, transform.localScale.z);
+    }
+
+    public void TimeScaler(float time, float indicator)
+    {
+        Time.timeScale = indicator;
+        CancelInvoke("normalTime");
+        Invoke("normalTime", time);
+    }
+
+    void normalTime()
+    {
+        Time.timeScale = 1;
     }
 }

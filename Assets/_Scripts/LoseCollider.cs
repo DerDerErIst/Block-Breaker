@@ -17,7 +17,7 @@ public class LoseCollider : MonoBehaviour {
             if (Paddle.lives <= 0)
             {
                 LevelManager.checkpoint = SceneManager.GetActiveScene().buildIndex;
-                levelManager.LoadLevel("Lose Screen");
+                levelManager.LoadLevel("03 Lose");
             }
             else
             {

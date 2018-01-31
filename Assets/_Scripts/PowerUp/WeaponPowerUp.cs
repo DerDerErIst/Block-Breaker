@@ -6,13 +6,13 @@ using UnityEngine;
 public class WeaponPowerUp : PowerUp
 {
 
-    public float time;
-    public float fireRate;
-    public GameObject projectile;
+    [SerializeField] float time;
+    [SerializeField] float fireRate;
+    [SerializeField] GameObject projectile;
 
     public override void Use()
     {
         base.Use();
-        paddle.SetShooter(time, projectile, fireRate);
+        Paddle.paddleInstance.SetShooter(time, projectile, fireRate);
     }
 }

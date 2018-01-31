@@ -24,9 +24,10 @@ public class Brick : MonoBehaviour
     int timesHit;
     bool isBreakable;
 
-
+    Player playerManager;
     // Use this for initialization
     void Start () {
+        playerManager = FindObjectOfType<Player>();
         audioSource = GetComponent<AudioSource>();
 
         isBreakable = (this.tag == "Breakable");
@@ -60,17 +61,20 @@ public class Brick : MonoBehaviour
     {
         ++timesHit;
         int maxHits = hitSprites.Length + 1;
-        Paddle.highscore += score;
-        Paddle.paddleInstance.highscoreText.text = Paddle.highscore.ToString();
+        Paddle.score += score;
+        playerManager.score += score;
+        Paddle.paddleInstance.highscoreText.text = Paddle.score.ToString();
 
         bool isDropTime = UnityEngine.Random.Range(0f, 1f) <= dropchance;
         if (isDropTime)
         {
-            GameObject PowerUp = Instantiate(powerUps[Random.Range(0, powerUps.Length)], gameObject.transform.position, Quaternion.identity) as GameObject;
+           Instantiate(powerUps[Random.Range(0, powerUps.Length)], gameObject.transform.position, Quaternion.identity);
+
         }
 
         if (timesHit >= maxHits)
-        {            
+        {
+            ++playerManager.brickCounter;
             breakableCount--;            
             levelManager.BrickDestroyed();
             Instantiate(explosion, gameObject.transform.position, Quaternion.identity);
