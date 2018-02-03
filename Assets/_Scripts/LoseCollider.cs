@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class LoseCollider : MonoBehaviour {
 
-    private LevelManager levelManager;
 
-    private void Start()
+    LevelManager levelManager;
+
+    void Start()
     {
         levelManager = GameObject.FindObjectOfType<LevelManager>();
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.GetComponent<Ball>())
         {
@@ -21,16 +21,24 @@ public class LoseCollider : MonoBehaviour {
             }
             else
             {
-                Paddle.lives--;
-                Paddle.paddleInstance.liveText.text = Paddle.lives.ToString();
-                Ball.ballInstance.hasStarted = false;
-                Ball.ballInstance.ResetBallPosition();
-
+                Destroy(collision.gameObject);
+                Invoke("FindOtherBalls", .5f);
             }
         }
         else
         {
             Destroy(collision.gameObject);
+        }
+    }
+
+    void FindOtherBalls()
+    { 
+        Ball ball = FindObjectOfType<Ball>();
+        if (ball == null)
+        {
+            Paddle.paddleInstance.InstantiateBall(Paddle.paddleInstance.balls[Random.Range(0, Paddle.paddleInstance.balls.Length)]); //TODO HOW TO GET RID OF THAT PFUI
+            Paddle.lives--;
+            Paddle.paddleInstance.liveText.text = Paddle.lives.ToString();
         }
     }
 }

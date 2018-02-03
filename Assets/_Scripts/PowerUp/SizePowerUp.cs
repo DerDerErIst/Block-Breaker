@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Live", menuName = "PowerUp/Size")]
 public class SizePowerUp : PowerUp
 {
-
     [SerializeField] float time;
     [SerializeField] float size;
 

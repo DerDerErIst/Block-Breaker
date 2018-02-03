@@ -2,22 +2,15 @@
 
 public class Ball : MonoBehaviour {
 
-    public static Ball ballInstance;
-
-    private void Awake()
-    {
-        ballInstance = this;
-    }
 
     [SerializeField] AudioClip[] clip;
 
-    private Paddle paddle;
-    public bool hasStarted = false;
-    private Vector3 paddleToBallVector;
-    private AudioSource audioSource;
-    private Rigidbody2D rb;
+    Paddle paddle;
+    bool hasStarted = false;
+    Vector3 paddleToBallVector;
+    AudioSource audioSource;
+    Rigidbody2D rb;
 
-	// Use this for initialization
 	void Start ()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,7 +19,6 @@ public class Ball : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();        
     }
 
-    // Update is called once per frame
     void Update () {
         if (!hasStarted)
         {
@@ -39,13 +31,12 @@ public class Ball : MonoBehaviour {
         }
 	}
 
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
             float x = hitFactor(transform.position, collision.transform.position, collision.collider.bounds.size.x);
-            Vector2 dir = new Vector2(x*10, 10);
+            Vector2 dir = new Vector2(x*9, 10);
             rb.velocity = dir;
         }
         if (collision.gameObject.tag == "Collider")

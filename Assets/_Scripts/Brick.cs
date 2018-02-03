@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
@@ -24,10 +22,10 @@ public class Brick : MonoBehaviour
     int timesHit;
     bool isBreakable;
 
-    Player playerManager;
-    // Use this for initialization
+    PlayerManager playerManager;
+
     void Start () {
-        playerManager = FindObjectOfType<Player>();
+        playerManager = FindObjectOfType<PlayerManager>();
         audioSource = GetComponent<AudioSource>();
 
         isBreakable = (this.tag == "Breakable");
@@ -39,7 +37,7 @@ public class Brick : MonoBehaviour
         timesHit = 0;
 	}
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         audioSource.PlayOneShot(crack[Random.Range(0, crack.Length)]);
         if (isBreakable)
@@ -48,7 +46,7 @@ public class Brick : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (isBreakable && collision.GetComponent<Projectile>())
         {
@@ -57,12 +55,12 @@ public class Brick : MonoBehaviour
         }
     }
 
-    private void HandleHits()
+    void HandleHits()
     {
         ++timesHit;
         int maxHits = hitSprites.Length + 1;
         Paddle.score += score;
-        playerManager.score += score;
+        playerManager.player.score += score;
         Paddle.paddleInstance.highscoreText.text = Paddle.score.ToString();
 
         bool isDropTime = UnityEngine.Random.Range(0f, 1f) <= dropchance;
@@ -74,7 +72,7 @@ public class Brick : MonoBehaviour
 
         if (timesHit >= maxHits)
         {
-            ++playerManager.brickCounter;
+            ++playerManager.player.brickCounter;
             breakableCount--;            
             levelManager.BrickDestroyed();
             Instantiate(explosion, gameObject.transform.position, Quaternion.identity);
@@ -86,7 +84,7 @@ public class Brick : MonoBehaviour
         }
     }
 
-    private void LoadSprites()
+    void LoadSprites()
     {
         int spriteIndex = timesHit - 1;
         if (hitSprites[spriteIndex] != null)

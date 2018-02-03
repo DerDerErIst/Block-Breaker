@@ -5,17 +5,15 @@ public class LevelManager : MonoBehaviour {
 
     public static int checkpoint;
 
-    Player playerManager;
-
-    private void Start()
-    {
-        playerManager = FindObjectOfType<Player>();
+    public void LoadLevel(string name)
+    {        
+        Debug.Log("New Level load with Post Data: " + name);
+        SceneManager.LoadScene(name);
     }
 
-    public void LoadLevel(string name)
+    public void LoadLevelWithoutPost(string name)
     {
-        PostDataToGameSpark();
-        Debug.Log("New Level load: " + name);
+        Debug.Log("New Level load No Data Post: " + name);
         SceneManager.LoadScene(name);
     }
 
@@ -31,10 +29,8 @@ public class LevelManager : MonoBehaviour {
     }
 
     public void LoadNextLevel()
-    {
-        
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        PostDataToGameSpark();
+    {        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);        
     }
 
     public void QuitRequest()
@@ -50,12 +46,14 @@ public class LevelManager : MonoBehaviour {
         Application.Quit();
 #elif (UNITY_WEBGL)
     Application.OpenURL("about:blank");
+#else
+        Application.Quit();
 #endif
     }
 
     public void BrickDestroyed()
     {
-        if (Brick.breakableCount <= 0)
+        if (Brick.breakableCount <= 1)
         {
             LoadNextLevel();
         }     
@@ -68,25 +66,9 @@ public class LevelManager : MonoBehaviour {
         Paddle.lives = 3;
     }
 
-    public void PostDataToGameSpark()
+    public void LoadInvaderLevel(string name)
     {
-        if (GameSparksManager.instance)
-        {
-            new GameSparks.Api.Requests.LogEventRequest()
-                .SetEventKey("SAVE_BRICK")
-                .SetEventAttribute("BRICK", playerManager.brickCounter)
-                .Send((response) => {
-
-                    if (!response.HasErrors)
-                    {
-                        Debug.Log("Brick Posted Sucessfully...");
-                    }
-                    else
-                    {
-                        Debug.Log("Error Posting Score...");
-                    }
-                });
-        }
+        SceneWarp.checkpointScene = name;
+        SceneManager.LoadScene("01c SceneWarp");  
     }
-
 }

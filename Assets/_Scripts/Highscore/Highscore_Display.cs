@@ -10,7 +10,7 @@ public class Highscore_Display : MonoBehaviour {
 
     public void Start()
     {
-        GetLeaderboard();
+        //GetLeaderboard();
     }
 
     public void GetLeaderboard()

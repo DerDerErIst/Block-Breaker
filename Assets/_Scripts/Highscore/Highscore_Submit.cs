@@ -1,50 +1,41 @@
-﻿
-using System;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class Highscore_Submit : MonoBehaviour {
 
-    public Text nameInput, scoreText;
+    PlayerManager playerManager; // Reference for send Event Save
 
-    Player playerManager;
-
-    public void Start()
+    void Start()
     {
-        playerManager = FindObjectOfType<Player>();
-        scoreText.text = Paddle.score.ToString();
-        if(playerManager.highscore <= Paddle.score)
+        playerManager = FindObjectOfType<PlayerManager>();
+        if (playerManager.player.highscore <= Paddle.score) //If Score from Paddle is higher then highscore
         {
-            NewHighScore();
-        }        
+            Debug.Log("Old Highscore for Cloud" + playerManager.player.highscore);
+            playerManager.player.highscore = Paddle.score; //Set New Highscore
+            Debug.Log("New Highscore on Paddle" + Paddle.score + "New Highscore for Cloud" + playerManager.player.highscore);
+        }
+        PostDataToGameSpark(); //Post Data to Gamespark Cloud
     }
 
-    private void NewHighScore()
+    void PostDataToGameSpark()
     {
-        Debug.Log("NEW HIGHSCORE" + Paddle.score + "OLD SCORE" + playerManager.highscore);
-        playerManager.highscore = Paddle.score;
-        Debug.Log("New PlayerManager Highscore" + playerManager.highscore);
-        PostScoreBttn();
-        Debug.Log("Send to Cloud");
-    }
+        if (GameSparksManager.instance)
+        {
+            new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("SAVE_BRICK")
+                .SetEventAttribute("BRICK", playerManager.player.brickCounter)
+                .SetEventAttribute("SCORE_ALL", playerManager.player.score)
+                .SetEventAttribute("HIGHSCORE", playerManager.player.highscore)
+                .Send((response) => {
 
-    public void PostScoreBttn()
-    {
-        Debug.Log("Posting Score To Leaderboard...");
-        new GameSparks.Api.Requests.LogEventRequest()
-            .SetEventKey("SCORE_SUBMIT")
-            .SetEventAttribute("SCORE", scoreText.text)
-            .Send((response) => {
-
-                if (!response.HasErrors)
-                {
-                    Debug.Log("Score Posted Sucessfully...");
-                    Debug.Log("Post Score" + scoreText.text);
-                }
-                else
-                {
-                    Debug.Log("Error Posting Score...");
-                }
-            });
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Brick Posted Sucessfully...");
+                    }
+                    else
+                    {
+                        Debug.Log("Error Posting Score...");
+                    }
+                });
+        }
     }
 }

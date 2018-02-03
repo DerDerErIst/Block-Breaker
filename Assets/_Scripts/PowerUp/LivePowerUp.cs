@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Live", menuName = "PowerUp/Live")]
 public class LivePowerUp : PowerUp {
 
-    public bool Increase;
+    [SerializeField] bool Increase;
 
 	public override void Use()
     {

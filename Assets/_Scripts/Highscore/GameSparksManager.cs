@@ -10,6 +10,8 @@ public class GameSparksManager : MonoBehaviour {
     public LevelManager levelManager;
     public GameObject registerName;
 
+    PlayerManager playerManager;
+
     void Awake()
     {
         if (instance == null) // check to see if the instance has a reference
@@ -21,7 +23,7 @@ public class GameSparksManager : MonoBehaviour {
         {
             Destroy(this.gameObject);
         }
-
+        playerManager = GetComponent<PlayerManager>();
         GS.GameSparksAvailable += OnAvailable;
     }
 
@@ -44,10 +46,10 @@ public class GameSparksManager : MonoBehaviour {
                                 
                 if (!response.HasErrors)
                 {
-                    Invoke("LoadLevel", 1f);
+                    GetPlayerData();
+                    Invoke("LoadLevel", 2f);
                     Debug.Log("Device Authenticated...");
-                    
-                }
+                                    }
                 else
                 {
                     Debug.Log("Error Authenticating Device...");
@@ -63,8 +65,9 @@ public class GameSparksManager : MonoBehaviour {
                 {
                     if (!responses.HasErrors)
                     {
+                        GetPlayerData();
                         Debug.Log("Device Authenticated...");
-                        Invoke("LoadLevel", 2f);
+                        Invoke("LoadLevel", 2f);                        
                     }
                 }
                 else
@@ -74,5 +77,28 @@ public class GameSparksManager : MonoBehaviour {
                     registerName.SetActive(true);
                 }
             });
+    }
+
+    void GetPlayerData()
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+            .SetEventKey("LOAD_BRICKS")            
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Recieved Load Bricks Data From GameSparks...");
+                        GSData data = response.ScriptData.GetGSData("brick_Data");
+                        playerManager.player.brickCounter = (int)data.GetInt("destroyedBricks"); //Mark as Int working
+                        playerManager.player.score = (int)data.GetInt("score");
+                        playerManager.player.highscore = (int)data.GetInt("highscore");
+                        print(data.GetString("playerDisplay"));
+                        playerManager.player.playerName = (string)data.GetString("playerDisplay");
+                    }
+                    else
+                    {
+                        Debug.Log("Error Loading Player Data...");
+                    }
+                });
     }
 }
