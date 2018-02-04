@@ -47,7 +47,6 @@ public class GameSparksManager : MonoBehaviour {
                 if (!response.HasErrors)
                 {
                     GetPlayerData();
-                    Invoke("LoadLevel", 2f);
                     Debug.Log("Device Authenticated...");
                                     }
                 else
@@ -67,7 +66,6 @@ public class GameSparksManager : MonoBehaviour {
                     {
                         GetPlayerData();
                         Debug.Log("Device Authenticated...");
-                        Invoke("LoadLevel", 2f);                        
                     }
                 }
                 else
@@ -91,9 +89,9 @@ public class GameSparksManager : MonoBehaviour {
                         GSData data = response.ScriptData.GetGSData("brick_Data");
                         playerManager.player.brickCounter = (int)data.GetInt("destroyedBricks"); //Mark as Int working
                         playerManager.player.score = (int)data.GetInt("score");
-                        playerManager.player.highscore = (int)data.GetInt("highscore");
-                        print(data.GetString("playerDisplay"));
+                        playerManager.player.highscore = (int)data.GetInt("highscore");                        
                         playerManager.player.playerName = (string)data.GetString("playerDisplay");
+                        Invoke("LoadLevel", 2f);
                     }
                     else
                     {

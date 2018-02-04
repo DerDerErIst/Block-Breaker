@@ -7,7 +7,7 @@ public class Boundary
 }
 
 public class PlayerController : MonoBehaviour
-{    
+{
     public float speed;
     public float tilt;
     public Boundary boundary;
@@ -21,25 +21,61 @@ public class PlayerController : MonoBehaviour
 
     float nextFire;
     AudioSource audioSource;
-
     Rigidbody rb;
+    Camera mainCamera;
 
-    private void Start()
+    void Start()
     {
+        mainCamera = Camera.main;
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
     }
 
     void Update()
-    {
+    { //On the Desktop Version we simple Shot with MouseButton on the Mobile Phone we use Automatic Shot or maybe a Button (hard to realise)
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+        FireOnStandalone();
+#elif UNITY_IOS || UNITY_ANDROID || UNITY_WSA_10_0 
+        FireOnMobile();
+#endif
+    }
 
+    void FireOnMobile()
+    {
+        if (Time.time > nextFire)
+        {   //Automatic FireSystem
+            nextFire = Time.time + fireRate;
+            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+            if (roundRobin)
+            {
+                for (int i = 0; i < shotSounds.Length; i++)
+                {
+                    audioSource.volume = Random.Range(0.8f, 1f);
+                    audioSource.pitch = Random.Range(0.8f, 1f);
+                    audioSource.PlayOneShot(shotSounds[i]);
+                }
+            }
+            else
+            {
+                audioSource.volume = Random.Range(0.8f, 1f);
+                audioSource.pitch = Random.Range(0.8f, 1f);
+                audioSource.PlayOneShot(shotSounds[Random.Range(0, shotSounds.Length)]);
+            }
+        }
+    }
+
+    void FireOnStandalone()
+    {
         if (Input.GetButton("Fire1") && Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
             Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
             if (roundRobin)
-            {
+            {   //Im Using a Process here that called Round Robin
+                // Simple i go though an Array of Audio Clips and play them with a random volume and random pitch
+                // So i got X different Sounds they get mixed everytime again together with another random values
+                // This gives the abilitiie to make amazing Shot Sounds possible
+                // If you wanna Know more about https://en.wikipedia.org/wiki/Round-robin_scheduling
                 for (int i = 0; i < shotSounds.Length; i++)
                 {
                     audioSource.volume = Random.Range(0.8f, 1f);
@@ -48,54 +84,51 @@ public class PlayerController : MonoBehaviour
                 }
             }
             else
-            {
+            {   //If we Deactivate Round Robin he plays Random Sounds from the Array with Random Values
                 audioSource.volume = Random.Range(0.8f, 1f);
                 audioSource.pitch = Random.Range(0.8f, 1f);
-                audioSource.PlayOneShot(shotSounds[Random.Range(0,shotSounds.Length)]);
+                audioSource.PlayOneShot(shotSounds[Random.Range(0, shotSounds.Length)]);
             }
         }
+    }
+
+    void FixedUpdate()
+    {
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+         MoveWithKeyBoard();
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WSA_10_0
 
-        if (Time.time > nextFire)
+        if (Input.GetMouseButton(0)) //if mouse button was pressed       
         {
-            nextFire = Time.time + fireRate;
-            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
-            if (roundRobin)
-            {
-                for (int i = 0; i < shotSounds.Length; i++)
-                {
-                    audioSource.volume = Random.Range(0.8f, 1f);
-                    audioSource.pitch = Random.Range(0.8f, 1f);
-                    audioSource.PlayOneShot(shotSounds[i]);
-                }
-            }
-            else
-            {
-                audioSource.volume = Random.Range(0.8f, 1f);
-                audioSource.pitch = Random.Range(0.8f, 1f);
-                audioSource.PlayOneShot(shotSounds[Random.Range(0,shotSounds.Length)]);
-            }
+            Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition); //calculating mouse position in the worldspace
+            mousePosition.y = transform.position.y;
+            transform.position = Vector3.MoveTowards(transform.position, mousePosition, 30 * Time.deltaTime);
         }
+        rb.position = new Vector3    //if 'Player' crossed the movement borders, returning him back 
+                (
+                Mathf.Clamp(this.transform.position.x, boundary.xMin, boundary.xMax),
+                Mathf.Clamp(this.transform.position.z, boundary.zMin, boundary.zMax),
+                0
+                );
 #endif
     }
 
+    void MoveWithKeyBoard()
+    {
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
 
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        rb.velocity = movement * speed;
 
-    void FixedUpdate()
-        {
-            float moveHorizontal = Input.GetAxis("Horizontal");
-            float moveVertical = Input.GetAxis("Vertical");
+        rb.position = new Vector3
+        (
+            Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+            0.0f,
+            Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+        );
 
-            Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
-            rb.velocity = movement * speed;
-
-            rb.position = new Vector3
-            (
-                Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-                0.0f,
-                Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
-            );
-
-            rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
-        }
+        rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
     }
+}
+

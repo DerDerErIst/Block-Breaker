@@ -33,6 +33,7 @@ public class Paddle : MonoBehaviour {
 
 	void Start ()
     {
+        //Cursor.visible = false;
         highscoreText.text = score.ToString();
         liveText.text = lives.ToString();
         InstantiateBall(balls[Random.Range(0, balls.Length)]);
@@ -40,6 +41,8 @@ public class Paddle : MonoBehaviour {
 
     public void InstantiateBall(GameObject ball)
     {
+        //We Call this also from Loose Collider actually we need to get Rid somehow
+        //We Call it also from the PowerUp thats fine
         Instantiate(ball, ballSpawn.transform.position, Quaternion.identity);
     }
 
@@ -47,7 +50,7 @@ public class Paddle : MonoBehaviour {
     void Update ()
     {
         if(isShooter)
-        {            
+        {   //For Simplicity to Mobile we not give the Player the Option to shot         
             if (Time.time > nextFire)
             {
                 nextFire = Time.time + fireRate;
@@ -57,6 +60,10 @@ public class Paddle : MonoBehaviour {
         MoveWithMouse();
     }
 
+    //For the Power Up System i use Invokes to call the normal States.
+    //This gives the Ability for the Designer to make timebased PowerUps
+    //Power Ups like Size Increase and Decrease are Stackable until he reach the endsize
+
     void Fire()
     {
         Instantiate(projectile, leftWeapon.transform.position, Quaternion.identity);
@@ -65,6 +72,7 @@ public class Paddle : MonoBehaviour {
 
     void MoveWithMouse()
     {
+        //We Move the Paddle with the Mouse from Left to Ride and Clamp the Position this also works on Mobile Devices
         Vector3 paddlePos = new Vector3(0.5f, this.transform.position.y, 0f);
         float mousePosInBlocks = Input.mousePosition.x / Screen.width * 20;
         paddlePos.x = Mathf.Clamp(mousePosInBlocks, 0f, 20f);
@@ -88,10 +96,19 @@ public class Paddle : MonoBehaviour {
 
     public void IncreaseSize(float time, float size)
     {
-        if(transform.localScale.x <= 4 && transform.localScale.x >= 0.5f)
-        this.transform.localScale = new Vector3(transform.localScale.x * size, transform.localScale.y, transform.localScale.z);
-        CancelInvoke("normalSize");
-        Invoke("normalSize", time);        
+        if (transform.localScale.x <= 4 || transform.localScale.x >= 0.5f)
+        {   //When we not have the End Size we multiply the size
+            this.transform.localScale = new Vector3(transform.localScale.x * size, transform.localScale.y, transform.localScale.z);
+            CancelInvoke("normalSize");
+            Invoke("normalSize", time);
+        }
+        if (transform.localScale.x == 4 || transform.localScale.x == 0.5f)
+        {   //If we already reach the End Size then we still collect the PowerUp and reset the Time
+            this.transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            CancelInvoke("normalSize");
+            Invoke("normalSize", time);
+        }
+
     }
 
     void normalSize()
