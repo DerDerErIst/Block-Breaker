@@ -97,7 +97,6 @@ public class PlayerController : MonoBehaviour
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
          MoveWithKeyBoard();
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WSA_10_0
-
         MoveWithTouchScreen();
 #endif
     }
@@ -126,7 +125,7 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.velocity = movement * speed;
 
-        rb.position = new Vector3 //Calculate Boundary
+        rb.transform.position = new Vector3 //Calculate Boundary
                                 (
                                 Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
                                 0.0f,

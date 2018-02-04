@@ -7,7 +7,7 @@ public class SceneWarp : MonoBehaviour {
 
     private void Start()
     {
-        Invoke("LoadCheckpointScene", 3f);
+        Invoke("LoadCheckpointScene", 3.5f);
     }
 
     void LoadCheckpointScene()

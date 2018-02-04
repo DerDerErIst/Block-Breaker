@@ -64,7 +64,7 @@ public class PlayerPrefsManager : MonoBehaviour {
     //TODO Let the Cloud handle this
     public static void UnlockLevel(int level)
     {
-        if (level <= SceneManager.sceneCountInBuildSettings - 9)
+        if (level <= SceneManager.sceneCountInBuildSettings - 1)
         {
             PlayerPrefs.SetInt(LEVEL_KEY_BREAKER + level.ToString(), 1); // Use 1 for true
         }

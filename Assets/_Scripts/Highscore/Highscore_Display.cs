@@ -10,7 +10,7 @@ public class Highscore_Display : MonoBehaviour {
 
     public void Start()
     {
-        //GetLeaderboard();
+        GetLeaderboard();
     }
 
     public void GetLeaderboard()
@@ -18,7 +18,7 @@ public class Highscore_Display : MonoBehaviour {
         Debug.Log("Fetching Leaderboard Data...");
 
         new GameSparks.Api.Requests.LeaderboardDataRequest()
-            .SetLeaderboardShortCode("HIGHSCORE")
+            .SetLeaderboardShortCode("PLAYER_HIGHSCORE")
             .SetEntryCount(int.Parse(entryCount.text)) // we need to parse this text input, since the entry count only takes long
             .Send((response) => {
 
@@ -27,11 +27,11 @@ public class Highscore_Display : MonoBehaviour {
                     Debug.Log("Found Leaderboard Data...");
                     outputData.text = System.String.Empty; // first clear all the data from the output
                     foreach (GameSparks.Api.Responses.LeaderboardDataResponse._LeaderboardData entry in response.Data) // iterate through the leaderboard data
-                    {
+                    {                        
                         int rank = (int)entry.Rank; // we can get the rank directly
-                        string name = entry.UserName;
-                        string score = entry.JSONData["SCORE"].ToString(); // we need to get the key, in order to get the score
-                        outputData.text += rank + "  Name" + name + "   Score:" + score + "\n"; // addd the score to the output text
+                        // name = entry.UserName;
+                        string score = entry.JSONData["MAX-HIGHSCORE"].ToString(); // we need to get the key, in order to get the Score
+                        outputData.text += rank +" " /*+ name*/ + " Score: " + score + "\n"; // addd the score to the output text
                     }
                 }
                 else

@@ -61,11 +61,7 @@ public class Paddle : MonoBehaviour
                 Fire();
             }
         }
-        if (EventSystem.current.IsPointerOverGameObject())
-        {   //For Mobile we simple Ask if the Pointer is over a GameObject
-            //We need to avoid that the Player Paddle is moving to the Launch Button
-            return;
-        }
+        
         MoveWithMouse();
     }
 

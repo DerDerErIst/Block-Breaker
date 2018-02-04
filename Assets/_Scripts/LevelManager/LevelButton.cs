@@ -12,7 +12,7 @@ public class LevelButton : MonoBehaviour
         SetButton();
     }
 
-    private void SetButton()
+    void SetButton()
     {
         Text buttonText = GetComponentInChildren<Text>();
         buttonText.text = nextLevelString;
@@ -21,6 +21,6 @@ public class LevelButton : MonoBehaviour
     public void CallLevel()
     {
         LevelManager levelManager = FindObjectOfType<LevelManager>();
-        levelManager.LoadLevelWithReset(nextLevelString);
+        levelManager.LoadLevelWithResetAdventureMode(nextLevelString);
     }
 }
