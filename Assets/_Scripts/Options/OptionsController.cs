@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
-public class OptionsController : MonoBehaviour {
-
+public class OptionsController : MonoBehaviour
+{
     public Slider masterSlider;
     public Slider musicSlider;
     public Slider effectSlider;

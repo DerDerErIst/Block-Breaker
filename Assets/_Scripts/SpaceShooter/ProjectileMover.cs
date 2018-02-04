@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ProjectileMover : MonoBehaviour {
-
+public class ProjectileMover : MonoBehaviour
+{
     public float speed;
 
     Rigidbody rb;

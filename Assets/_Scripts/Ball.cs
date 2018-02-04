@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-public class Ball : MonoBehaviour {
 
+public class Ball : MonoBehaviour
+{
     [SerializeField] AudioClip[] clip;
 
     Paddle paddle;

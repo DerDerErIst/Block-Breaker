@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Paddle : MonoBehaviour {
-
+public class Paddle : MonoBehaviour
+{
     public static Paddle paddleInstance;
 
     private void Awake()
@@ -33,10 +34,14 @@ public class Paddle : MonoBehaviour {
 
 	void Start ()
     {
-        //Cursor.visible = false;
+        Cursor.visible = false;
         highscoreText.text = score.ToString();
         liveText.text = lives.ToString();
         InstantiateBall(balls[Random.Range(0, balls.Length)]);
+      
+#if UNITY_EDITOR
+        Cursor.visible = true;
+#endif
     }
 
     public void InstantiateBall(GameObject ball)
@@ -45,8 +50,7 @@ public class Paddle : MonoBehaviour {
         //We Call it also from the PowerUp thats fine
         Instantiate(ball, ballSpawn.transform.position, Quaternion.identity);
     }
-
-    // Update is called once per frame
+    
     void Update ()
     {
         if(isShooter)
@@ -56,6 +60,11 @@ public class Paddle : MonoBehaviour {
                 nextFire = Time.time + fireRate;
                 Fire();
             }
+        }
+        if (EventSystem.current.IsPointerOverGameObject())
+        {   //For Mobile we simple Ask if the Pointer is over a GameObject
+            //We need to avoid that the Player Paddle is moving to the Launch Button
+            return;
         }
         MoveWithMouse();
     }
@@ -108,7 +117,6 @@ public class Paddle : MonoBehaviour {
             CancelInvoke("normalSize");
             Invoke("normalSize", time);
         }
-
     }
 
     void normalSize()

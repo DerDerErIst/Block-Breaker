@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class AsteroidController : MonoBehaviour {
-
+public class AsteroidController : MonoBehaviour
+{
     public GameObject asteroid;
     public Vector3 spawnValues;
 

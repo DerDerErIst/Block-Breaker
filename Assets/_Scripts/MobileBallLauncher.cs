@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-public class MobileBallLauncher : MonoBehaviour {
-
+public class MobileBallLauncher : MonoBehaviour
+{
     public GameObject buttonLaunch;
 
     Ball ballInstance;
@@ -9,6 +9,7 @@ public class MobileBallLauncher : MonoBehaviour {
     void Start()
     {
         Ball.onMobile += SetBallInstance; // Listener to the Ball
+        //When the Delegate onMobile gets called this Script execute SetBallInstance
     }
 
     void OnDisable()
@@ -27,8 +28,8 @@ public class MobileBallLauncher : MonoBehaviour {
 
     public void SetBallInstance()
     {
-        ballInstance = FindObjectOfType<Ball>();
-        if (ballInstance.hasStarted)
+        ballInstance = FindObjectOfType<Ball>(); //TODO Find The Ball on Paddle
+        if (ballInstance.hasStarted) //TODO Bug on Mobile when you go back to Main Menue and back into Game he not find the Ball
         {
             return;
         }

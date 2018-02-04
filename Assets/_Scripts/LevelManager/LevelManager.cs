@@ -7,13 +7,12 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadLevel(string name)
     {        
-        Debug.Log("New Level load with Post Data: " + name);
         SceneManager.LoadScene(name);
     }
 
-    public void LoadLevelWithoutPost(string name)
+    public void LoadLevelWithReset(string name)
     {
-        Debug.Log("New Level load No Data Post: " + name);
+        Reset();
         SceneManager.LoadScene(name);
     }
 

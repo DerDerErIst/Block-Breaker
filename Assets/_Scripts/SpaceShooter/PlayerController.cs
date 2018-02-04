@@ -93,24 +93,29 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate()
-    {
+    { //On the Desktop we can Move with Keyboard on the Mobile we need a Sort of Touch Function to control
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
          MoveWithKeyBoard();
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WSA_10_0
 
-        if (Input.GetMouseButton(0)) //if mouse button was pressed       
+        MoveWithTouchScreen();
+#endif
+    }
+
+    void MoveWithTouchScreen()
+    {
+        if (Input.GetMouseButton(0)) //If we Press Mousebutton 0 similar to Touchscreen Touch 0      
         {
-            Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition); //calculating mouse position in the worldspace
+            Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition); //Mouse Position in WorldSpace
             mousePosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, mousePosition, 30 * Time.deltaTime);
         }
-        rb.position = new Vector3    //if 'Player' crossed the movement borders, returning him back 
-                (
-                Mathf.Clamp(this.transform.position.x, boundary.xMin, boundary.xMax),
-                Mathf.Clamp(this.transform.position.z, boundary.zMin, boundary.zMax),
-                0
-                );
-#endif
+        rb.position = new Vector3    //Calculate Boundary
+                                (
+                                Mathf.Clamp(this.transform.position.x, boundary.xMin, boundary.xMax),
+                                0.0f,
+                                Mathf.Clamp(this.transform.position.z, boundary.zMin, boundary.zMax)                                 
+                                );
     }
 
     void MoveWithKeyBoard()
@@ -121,12 +126,12 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.velocity = movement * speed;
 
-        rb.position = new Vector3
-        (
-            Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-            0.0f,
-            Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
-        );
+        rb.position = new Vector3 //Calculate Boundary
+                                (
+                                Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+                                0.0f,
+                                Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+                                );
 
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
     }
