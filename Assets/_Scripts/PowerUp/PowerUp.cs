@@ -4,9 +4,10 @@
 public class PowerUp : ScriptableObject {
 
     [Header("Start Here")]
-    public GameObject pickUp;    
+    public GameObject pickUp;
 
-    public virtual void Use()
+
+    public virtual void Use(Paddle pad)
     {
     }
 }

@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 
-public class Highscore_Submit : MonoBehaviour {
-
-    PlayerManager playerManager; // Reference for send Event Save
+public class Highscore_Submit : MonoBehaviour
+{
+    PlayerSceneManager playerManager; // Reference for send Event Save
 
     void Start()
     {
-        playerManager = FindObjectOfType<PlayerManager>();
-        if (playerManager.player.highscore <= Paddle.score) //If Score from Paddle is higher then highscore
+        playerManager = FindObjectOfType<PlayerSceneManager>();
+        if (playerManager.player.highscore <= PlayerSceneManager.score) //If Score from Paddle is higher then highscore
         {
             Debug.Log("Old Highscore for Cloud" + playerManager.player.highscore);
-            playerManager.player.highscore = Paddle.score; //Set New Highscore
-            Debug.Log("New Highscore on Paddle" + Paddle.score + "New Highscore for Cloud" + playerManager.player.highscore);
+            playerManager.player.highscore = PlayerSceneManager.score; //Set New Highscore
+            Debug.Log("New Highscore on Paddle" + PlayerSceneManager.score + "New Highscore for Cloud" + playerManager.player.highscore);
         }
         PostDataToGameSpark(); //Post Data to Gamespark Cloud
     }
@@ -34,6 +34,21 @@ public class Highscore_Submit : MonoBehaviour {
                     else
                     {
                         Debug.Log("Error Posting Score...");
+                    }
+                });
+            new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("GRANT_CURRENCY")
+                .SetEventAttribute("CASH", PlayerSceneManager.playerManager.earnedSpaceBricks)
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Currency Posted Sucessfully...");
+                        AccountDetailRequest.accReq.GetAccountData();
+                    }
+                    else
+                    {
+                        Debug.Log("Error Currency Score...");
                     }
                 });
         }

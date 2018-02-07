@@ -49,6 +49,6 @@ public class MusicPlayer : MonoBehaviour
     {
         audioMixer.SetFloat("masterVolume", PlayerPrefsManager.GetMasterVolume());
         audioMixer.SetFloat("musicVolume", PlayerPrefsManager.GetMusicVolume());
-        audioMixer.SetFloat("effectsVolume", PlayerPrefsManager.GetEffectVolume());
+        audioMixer.SetFloat("effectVolume", PlayerPrefsManager.GetEffectVolume());
     }
 }

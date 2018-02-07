@@ -10,7 +10,7 @@ public class GameSparksManager : MonoBehaviour {
     public LevelManager levelManager;
     public GameObject registerName;
 
-    PlayerManager playerManager;
+    PlayerSceneManager playerManager;
 
     void Awake()
     {
@@ -23,7 +23,7 @@ public class GameSparksManager : MonoBehaviour {
         {
             Destroy(this.gameObject);
         }
-        playerManager = GetComponent<PlayerManager>();
+        playerManager = GetComponent<PlayerSceneManager>();
         GS.GameSparksAvailable += OnAvailable;
     }
 
@@ -31,7 +31,7 @@ public class GameSparksManager : MonoBehaviour {
 
     void LoadLevel()
     {
-        levelManager.LoadLevelStart();
+        levelManager.LoadLevelStartWithReset();
     }
 
     public void AuthenticateDeviceBttn()

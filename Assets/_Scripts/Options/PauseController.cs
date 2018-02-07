@@ -29,7 +29,7 @@ public class PauseController : MonoBehaviour {
     public void ExitToStart()
     {
         Time.timeScale = 1f;
-        levelManager.LoadLevel("01a Start Menu");    
+        levelManager.LoadMenueStructure("03 Lose");    
     }
 
     public void OpenMenue()

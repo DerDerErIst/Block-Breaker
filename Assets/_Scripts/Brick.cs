@@ -2,8 +2,6 @@
 
 public class Brick : MonoBehaviour
 {
-    public static int breakableCount = 0;
-
     [Header("PowerUp Settings")]
     [Range(0,1)]public float dropchance;
     public GameObject[] powerUps;
@@ -22,16 +20,13 @@ public class Brick : MonoBehaviour
     int timesHit;
     bool isBreakable;
 
-    PlayerManager playerManager;
-
-    void Start () {
-        playerManager = FindObjectOfType<PlayerManager>();
+    void Awake () {
         audioSource = GetComponent<AudioSource>();
 
         isBreakable = (this.tag == "Breakable");
         if(isBreakable)
         {
-            breakableCount++;
+            AdventureMode.breakableCount++;
         }
         levelManager = GameObject.FindObjectOfType<LevelManager>();
         timesHit = 0;
@@ -59,22 +54,18 @@ public class Brick : MonoBehaviour
     {
         ++timesHit;
         int maxHits = hitSprites.Length + 1;
-        Paddle.score += score;
-        playerManager.player.score += score;
-        Paddle.paddleInstance.highscoreText.text = Paddle.score.ToString();
-
+        PlayerSceneManager.score += score;
+        PlayerSceneManager.playerManager.UpdateGameDisplay();
         bool isDropTime = UnityEngine.Random.Range(0f, 1f) <= dropchance;
         if (isDropTime)
         {
            Instantiate(powerUps[Random.Range(0, powerUps.Length)], gameObject.transform.position, Quaternion.identity);
-
         }
 
         if (timesHit >= maxHits)
         {
-            ++playerManager.player.brickCounter;
-            breakableCount--;            
-            levelManager.BrickDestroyed();
+            ++PlayerSceneManager.playerManager.player.brickCounter;
+            AdventureMode.breakableCount--;            
             Instantiate(explosion, gameObject.transform.position, Quaternion.identity);
             Destroy(gameObject);
         }

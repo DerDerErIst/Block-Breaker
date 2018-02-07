@@ -8,9 +8,9 @@ public class TimeScalePowerUp : PowerUp {
     [SerializeField] float time;
     [SerializeField] [Range(0,2)]public float indicator;
 
-    public override void Use()
+    public override void Use(Paddle pad)
     {
-        base.Use();
-        Paddle.paddleInstance.TimeScaler(time, indicator);
+        base.Use(pad);
+        pad.TimeScaler(time, indicator);
     }
 }

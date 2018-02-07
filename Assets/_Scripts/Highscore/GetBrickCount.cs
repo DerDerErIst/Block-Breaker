@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GetBrickCount : MonoBehaviour {
-
+public class GetBrickCount : MonoBehaviour
+{
     public Text brickCount;
     public Text overallScore;
     public Text highScore;
 
-    PlayerManager playerManager;
+    PlayerSceneManager playerManager;
 
     // Use this for initialization
     void Start()
     {
-        playerManager = FindObjectOfType<PlayerManager>();
+        playerManager = FindObjectOfType<PlayerSceneManager>();
         ChangeBrickText();
     }
 

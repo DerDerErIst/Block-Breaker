@@ -8,12 +8,15 @@ public class Boundary
 
 public class PlayerController : MonoBehaviour
 {
+    public int price; //Just for Display
+    public Sprite shipImage; //TODO Lets Think about how to make this as Movie
+
     public float speed;
     public float tilt;
     public Boundary boundary;
 
     public GameObject shot;
-    public Transform shotSpawn;
+    public Transform[] shotSpawn;
     public float fireRate;
 
     public AudioClip[] shotSounds;
@@ -40,19 +43,28 @@ public class PlayerController : MonoBehaviour
 #endif
     }
 
+    //Im Using a Process here that called Round Robin
+    // Simple i go though an Array of Audio Clips and play them with a random volume and random pitch
+    // So i got X different Sounds they get mixed everytime again together with another random values
+    // This gives the abilitiie to make amazing Shot Sounds possible
+    // If you wanna Know more about https://en.wikipedia.org/wiki/Round-robin_scheduling
+
     void FireOnMobile()
     {
         if (Time.time > nextFire)
         {   //Automatic FireSystem
             nextFire = Time.time + fireRate;
-            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+            for (int i = 0; i < shotSpawn.Length; i++)
+            {
+                Instantiate(shot, new Vector3(shotSpawn[i].position.x, 0f, 0f), shotSpawn[i].rotation);
+            }
             if (roundRobin)
             {
-                for (int i = 0; i < shotSounds.Length; i++)
+                for (int y = 0; y < shotSounds.Length; y++)
                 {
                     audioSource.volume = Random.Range(0.8f, 1f);
                     audioSource.pitch = Random.Range(0.8f, 1f);
-                    audioSource.PlayOneShot(shotSounds[i]);
+                    audioSource.PlayOneShot(shotSounds[y]);
                 }
             }
             else
@@ -61,6 +73,7 @@ public class PlayerController : MonoBehaviour
                 audioSource.pitch = Random.Range(0.8f, 1f);
                 audioSource.PlayOneShot(shotSounds[Random.Range(0, shotSounds.Length)]);
             }
+
         }
     }
 
@@ -69,18 +82,17 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButton("Fire1") && Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
-            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+            for (int i = 0; i < shotSpawn.Length; i++)
+            {
+                Instantiate(shot, new Vector3(shotSpawn[i].position.x, 0f, shotSpawn[i].position.z), shotSpawn[i].rotation);                
+            }
             if (roundRobin)
-            {   //Im Using a Process here that called Round Robin
-                // Simple i go though an Array of Audio Clips and play them with a random volume and random pitch
-                // So i got X different Sounds they get mixed everytime again together with another random values
-                // This gives the abilitiie to make amazing Shot Sounds possible
-                // If you wanna Know more about https://en.wikipedia.org/wiki/Round-robin_scheduling
-                for (int i = 0; i < shotSounds.Length; i++)
+            {   
+                for (int y = 0; y < shotSounds.Length; y++)
                 {
                     audioSource.volume = Random.Range(0.8f, 1f);
                     audioSource.pitch = Random.Range(0.8f, 1f);
-                    audioSource.PlayOneShot(shotSounds[i]);
+                    audioSource.PlayOneShot(shotSounds[y]);
                 }
             }
             else
@@ -109,7 +121,7 @@ public class PlayerController : MonoBehaviour
             mousePosition.y = transform.position.y;
             transform.position = Vector3.MoveTowards(transform.position, mousePosition, 30 * Time.deltaTime);
         }
-        rb.position = new Vector3    //Calculate Boundary
+        transform.position = new Vector3    //Calculate Boundary
                                 (
                                 Mathf.Clamp(this.transform.position.x, boundary.xMin, boundary.xMax),
                                 0.0f,
@@ -132,7 +144,7 @@ public class PlayerController : MonoBehaviour
                                 Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
                                 );
 
-        rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
+        transform.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
     }
 }
 

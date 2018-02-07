@@ -2,6 +2,46 @@
 using UnityEngine.SceneManagement;
 
 public class PlayerPrefsManager : MonoBehaviour {
+    #region Graphic
+    const string GRAPHIC_QUALITY = "graphic_quality";
+
+    public static void SetGraphicQuality(int qualityLevel)
+    {        
+      PlayerPrefs.SetInt(GRAPHIC_QUALITY, qualityLevel);       
+    }
+
+    public static int GetGraphicQuality()
+    {
+        return PlayerPrefs.GetInt(GRAPHIC_QUALITY);
+    }
+
+    const string FULLSCREEN = "fullscreen";
+
+    public static void SetFullscreen(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(FULLSCREEN, boolQuestion);
+    }
+
+    public static int GetFullscreen()
+    {
+        return PlayerPrefs.GetInt(FULLSCREEN);
+    }
+
+    const string FOGSETTING = "fogsetting";
+
+    public static void SetFogSetting(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(FOGSETTING, boolQuestion);
+    }
+
+    public static int GetFogSetting()
+    {
+        return PlayerPrefs.GetInt(FOGSETTING);
+    }
+
+
+    #endregion
+
     #region Sound
     const string MASTER_VOLUME_KEY = "master_volume";
     const string MUSIC_VOLUME_KEY = "music_volume";

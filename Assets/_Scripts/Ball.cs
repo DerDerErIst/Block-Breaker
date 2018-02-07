@@ -4,7 +4,9 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] AudioClip[] clip;
 
-    Paddle paddle;
+    public Sprite sprite;
+
+    MoveWithMouse paddle;
     public bool hasStarted = false;
     public bool mobileStart = false;
     Vector3 paddleToBallVector;
@@ -17,7 +19,7 @@ public class Ball : MonoBehaviour
     void Start ()
     {
         rb = GetComponent<Rigidbody2D>();
-        paddle = GameObject.FindObjectOfType<Paddle>();
+        paddle = GameObject.FindObjectOfType<MoveWithMouse>();
         paddleToBallVector = this.transform.position - paddle.transform.position;
         audioSource = GetComponent<AudioSource>();
 

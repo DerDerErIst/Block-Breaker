@@ -5,17 +5,17 @@ public class LivePowerUp : PowerUp {
 
     [SerializeField] bool Increase;
 
-	public override void Use()
+	public override void Use(Paddle pad)
     {
-        base.Use();
+        base.Use(pad);
         if (Increase)
         {
-            Paddle.lives++;
+            PlayerSceneManager.lives++;
         }
         else
         {
-            Paddle.lives--;
+            PlayerSceneManager.lives--;
         }
-        Paddle.paddleInstance.liveText.text = Paddle.lives.ToString();
+        PlayerSceneManager.playerManager.UpdateGameDisplay();
     }
 }

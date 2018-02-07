@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class SceneWarp : MonoBehaviour {
 
 	public static string checkpointScene;
+    public static string sceneToLoad;
 
     private void Start()
     {

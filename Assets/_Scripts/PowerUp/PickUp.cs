@@ -12,7 +12,7 @@ public class PickUp : MonoBehaviour {
         }
         else if (collision.GetComponent<Paddle>())
         {
-            powerUp.Use();
+            powerUp.Use(collision.GetComponent<Paddle>());
             Destroy(this);
         }
     }

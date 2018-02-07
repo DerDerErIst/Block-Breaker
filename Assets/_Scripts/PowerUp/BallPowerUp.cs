@@ -3,11 +3,9 @@
 [CreateAssetMenu(fileName = "Ball", menuName = "PowerUp/Ball")]
 public class BallPowerUp : PowerUp
 {
-    [SerializeField] GameObject ball;
-
-    public override void Use()
+    public override void Use(Paddle pad)
     {
-        base.Use();
-        Paddle.paddleInstance.InstantiateBall(ball);
+        base.Use(pad);        
+        pad.InstantiateBall();
     }
 }

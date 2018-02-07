@@ -7,10 +7,11 @@ public class WeaponPowerUp : PowerUp
     [SerializeField] float time;
     [SerializeField] float fireRate;
     [SerializeField] GameObject projectile;
+    [SerializeField] bool doubleShot = false;
 
-    public override void Use()
+    public override void Use(Paddle pad)
     {
-        base.Use();
-        Paddle.paddleInstance.SetShooter(time, projectile, fireRate);
+        base.Use(pad);
+        pad.SetShooter(time, projectile, fireRate, doubleShot);
     }
 }

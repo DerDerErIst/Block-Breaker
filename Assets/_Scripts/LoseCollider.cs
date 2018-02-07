@@ -1,23 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LoseCollider : MonoBehaviour {
-
-
+public class LoseCollider : MonoBehaviour
+{
     LevelManager levelManager;
+    Paddle paddle;
 
     void Start()
     {
+        paddle = GameObject.FindObjectOfType<Paddle>();
         levelManager = GameObject.FindObjectOfType<LevelManager>();
     }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.GetComponent<Ball>())
         {
-            if (Paddle.lives <= 0)
+            if (PlayerSceneManager.lives <= 0)
             {
                 LevelManager.checkpoint = SceneManager.GetActiveScene().buildIndex;
-                levelManager.LoadLevel("03 Lose");
+                levelManager.LoadMenueStructure("03 Lose");
             }
             else
             {
@@ -36,9 +38,9 @@ public class LoseCollider : MonoBehaviour {
         Ball ball = FindObjectOfType<Ball>();
         if (ball == null)
         {
-            Paddle.paddleInstance.InstantiateBall(Paddle.paddleInstance.balls[Random.Range(0, Paddle.paddleInstance.balls.Length)]); //TODO HOW TO GET RID OF THAT PFUI
-            Paddle.lives--;
-            Paddle.paddleInstance.liveText.text = Paddle.lives.ToString();
+            paddle.InstantiateBall(); //TODO HOW TO GET RID OF THAT PFUI
+            PlayerSceneManager.lives--;
+            PlayerSceneManager.playerManager.UpdateGameDisplay();
         }
     }
 }

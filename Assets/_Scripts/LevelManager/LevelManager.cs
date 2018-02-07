@@ -12,14 +12,16 @@ public class LevelManager : MonoBehaviour {
 
     public static bool adventureMode;
 
-    public void LoadLevel(string name)
+    public void LoadMenueStructure(string name)
     {
+        PlayerSceneManager.playerManager.gameLevel = false;
         Cursor.visible = true;
         SceneManager.LoadScene(name);
     }
 
     public void LoadLevelWithReset(string name)
-    { 
+    {
+        PlayerSceneManager.playerManager.gameLevel = true;
         adventureMode = false;
         Reset();
         SceneManager.LoadScene(name);
@@ -27,26 +29,30 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadLevelWithResetAdventureMode(string name)
     {
+        PlayerSceneManager.playerManager.gameLevel = true;
         adventureMode = true;
         Reset();
         SceneManager.LoadScene(name);
     }
 
-    public void LoadLevelStart()
+    public void LoadLevelStartWithReset()
     {
+        Reset();
+        PlayerSceneManager.playerManager.gameLevel = false;
         Cursor.visible = true;
         SceneManager.LoadScene("01a Start Menu");
     }
 
     public void Reset()
     {
-        Paddle.score = 0;
-        Paddle.lives = 3;
+        PlayerSceneManager.score = 0;
+        PlayerSceneManager.lives = 3;
+        PlayerSceneManager.playerManager.earnedSpaceBricks = 0;
     }
 
     public void LoadNextLevel()
     {
-        PlayerPrefsManager.UnlockLevel(SceneManager.GetActiveScene().buildIndex - 5); //Not Sure if this is actually working right xD
+        PlayerPrefsManager.UnlockLevel(SceneManager.GetActiveScene().buildIndex - 7); //Not Sure if this is actually working right xD
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);        
     }
 
@@ -68,24 +74,18 @@ public class LevelManager : MonoBehaviour {
 #endif
     }
 
-    public void BrickDestroyed()
-    {
-        if (Brick.breakableCount <= 1)
-        {
-            LoadNextLevel();
-        }     
-    }
-
     public void LoadLastLevel()
     {
+        PlayerSceneManager.playerManager.gameLevel = true;
+        Reset();
         SceneManager.LoadScene(checkpoint);
-        Paddle.score = 0;
-        Paddle.lives = 3;
     }
 
     public void LoadInvaderLevel(string name)
     {
+        Reset();
+        PlayerSceneManager.playerManager.gameLevel = false;
         SceneWarp.checkpointScene = name;
-        SceneManager.LoadScene("01c SceneWarp");  
+        SceneManager.LoadScene("01f SceneWarp");  
     }
 }

@@ -6,9 +6,9 @@ public class SizePowerUp : PowerUp
     [SerializeField] float time;
     [SerializeField] float size;
 
-    public override void Use()
+    public override void Use(Paddle pad)
     {
-        base.Use();
-        Paddle.paddleInstance.IncreaseSize(time, size);
+        base.Use(pad);
+        pad.IncreaseSize(time, size);
     }
 }
