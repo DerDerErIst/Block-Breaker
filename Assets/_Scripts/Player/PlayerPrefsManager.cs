@@ -39,6 +39,53 @@ public class PlayerPrefsManager : MonoBehaviour {
         return PlayerPrefs.GetInt(FOGSETTING);
     }
 
+    const string TUTORIALSETTING = "tutorialsetting";
+
+    public static void SetTutorialSetting(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(TUTORIALSETTING, boolQuestion);
+    }
+
+    public static int GetTutorialSetting()
+    {
+        return PlayerPrefs.GetInt(TUTORIALSETTING);
+    }
+
+    const string PLANETSETTING = "planetsetting";
+
+    public static void SetPlanetSetting(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(PLANETSETTING, boolQuestion);
+    }
+
+    public static int GetPlanetSetting()
+    {
+        return PlayerPrefs.GetInt(PLANETSETTING);
+    }
+
+    const string NEBULASETTING = "nebulasetting";
+
+    public static void SetNebulaSetting(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(NEBULASETTING, boolQuestion);
+    }
+
+    public static int GetNebulaSetting()
+    {
+        return PlayerPrefs.GetInt(NEBULASETTING);
+    }
+
+    const string SPECIALEFFECTSETTING = "specialeffetsetting";
+
+    public static void SetSpecialEffectSetting(int boolQuestion)
+    {
+        PlayerPrefs.SetInt(SPECIALEFFECTSETTING, boolQuestion);
+    }
+
+    public static int GetSpecialEffectSetting()
+    {
+        return PlayerPrefs.GetInt(SPECIALEFFECTSETTING);
+    }
 
     #endregion
 
@@ -102,32 +149,15 @@ public class PlayerPrefsManager : MonoBehaviour {
     #region Breaker Level
     const string LEVEL_KEY_BREAKER = "breaker_level_unlocked_";
     //TODO Let the Cloud handle this
-    public static void UnlockLevel(int level)
+    public static void UnlockLevel(string scene)
     {
-        if (level <= SceneManager.sceneCountInBuildSettings - 1)
-        {
-            PlayerPrefs.SetInt(LEVEL_KEY_BREAKER + level.ToString(), 1); // Use 1 for true
-        }
-        else
-        {
-            Debug.LogError("Trying to unlock level not in build order");
-        }
+        PlayerPrefs.SetString(LEVEL_KEY_BREAKER + scene, scene);
     }
 
-    public static bool IsLevelUnlocked(int level)
+    public static bool IsLevelUnlocked(string scene)
     {
-        int levelValue = PlayerPrefs.GetInt(LEVEL_KEY_BREAKER + level.ToString());
-        bool isLevelUnlocked = (levelValue == 1);
-
-        if (level <= SceneManager.sceneCountInBuildSettings - 9) //Input the Number of Non Breaker Level Scenes 
-        {
-            return isLevelUnlocked;
-        }
-        else
-        {
-            Debug.LogWarning("Trying to Query a level not Unlocked");
-            return false;
-        }
+         bool isLevelUnlocked = (PlayerPrefs.GetString(LEVEL_KEY_BREAKER + scene) == scene);
+         return isLevelUnlocked;
     }
     #endregion
 }

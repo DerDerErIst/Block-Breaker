@@ -1,17 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class MusicPlayer : MonoBehaviour
 {
     #region Singleton
-    static MusicPlayer instance = null;
+    public static MusicPlayer instance = null;
 
     public AudioMixer audioMixer;
-    public AudioClip[] soundtrack;
+    [Header("MultiClipList")]
+    public AudioClip[] soundtrackMenu;
+    public AudioClip[] soundtrackBreaker;
+    public AudioClip[] soundtrackRaider;
+    [Header("Single Clips")]
+    public AudioClip lostBreaker;
+    public AudioClip wonBreaker;
 
-    public AudioSource audioSource;
 
-    private void Awake()
+    public bool isBreaker;
+    public bool isRaider;
+    public bool isBreakerLost;
+    public bool isBreakerWon;
+    public bool isMenue = true;
+
+    AudioSource audioSource;
+
+    void Awake()
     {
         if (instance != null)
         {
@@ -22,25 +36,82 @@ public class MusicPlayer : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(this);
         }
+        audioSource = GetComponent<AudioSource>();
     }
     #endregion
 
-    private void Start()
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += CheckMusic;
+    }
+
+    void CheckMusic(Scene arg0, LoadSceneMode arg1)
+    {
+        CheckForMusic();
+    }
+
+    void Start()
     {
         SetAllVolume();
-        audioSource = GetComponent<AudioSource>();        
-        if (!audioSource.playOnAwake)
-        {
-            audioSource.clip = soundtrack[Random.Range(0, soundtrack.Length)];
-            audioSource.Play();
-        }
     }
 
     void Update()
     {
         if (!audioSource.isPlaying)
         {
-            audioSource.clip = soundtrack[Random.Range(0, soundtrack.Length)];
+            CheckForMusic();
+        }
+    }
+
+    void CheckForMusic()
+    {
+        if (isMenue)
+        {
+            if (audioSource.isPlaying)
+            {
+                //TODO FadeOut the Music and go into the Soundtrack of the Game Part
+                return;
+            }
+            else
+            {
+                audioSource.clip = soundtrackMenu[Random.Range(0, soundtrackMenu.Length)];
+                audioSource.Play();
+            }
+        }
+        else if (isBreaker)
+        {
+            if (audioSource.isPlaying)
+            {
+                return;
+            }
+            else
+            {
+                audioSource.clip = soundtrackBreaker[Random.Range(0, soundtrackBreaker.Length)];
+                audioSource.Play();
+            }
+        }
+        else if (isRaider)
+        {
+            if (audioSource.isPlaying)
+            {
+                return;
+            }
+            else
+            {
+                audioSource.clip = soundtrackRaider[Random.Range(0, soundtrackRaider.Length)];
+                audioSource.Play();
+            }
+        }
+        else if (isBreakerLost)
+        {
+            audioSource.Stop();
+            audioSource.clip = lostBreaker;
+            audioSource.Play();
+        }
+        else if (isBreakerWon)
+        {
+            audioSource.Stop();
+            audioSource.clip = wonBreaker;
             audioSource.Play();
         }
     }

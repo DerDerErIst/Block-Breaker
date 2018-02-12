@@ -12,16 +12,37 @@ public class LevelManager : MonoBehaviour {
 
     public static bool adventureMode;
 
+    public void LoadHighscoreScene()
+    {
+        SceneManager.LoadScene("01b Highscore");
+    }
+
     public void LoadMenueStructure(string name)
     {
-        PlayerSceneManager.playerManager.gameLevel = false;
+        PlayerSceneManager.playerManager.breakerLevel = false;
+        PlayerSceneManager.playerManager.raiderLevel = false;
         Cursor.visible = true;
+        Time.timeScale = 1;
+        SceneManager.LoadScene(name);
+    }
+
+    public void LoadLevelEndlessBreaker(string name)
+    {
+        MusicPlayer.instance.isBreaker = true;
+        MusicPlayer.instance.isMenue = false;
+        MusicPlayer.instance.isRaider = false;
+
+        PlayerSceneManager.playerManager.breakerLevel = true;
+        PlayerSceneManager.playerManager.raiderLevel = false;
+        adventureMode = false;
+        Reset();
         SceneManager.LoadScene(name);
     }
 
     public void LoadLevelWithReset(string name)
     {
-        PlayerSceneManager.playerManager.gameLevel = true;
+        PlayerSceneManager.playerManager.breakerLevel = true;
+        PlayerSceneManager.playerManager.raiderLevel = false;
         adventureMode = false;
         Reset();
         SceneManager.LoadScene(name);
@@ -29,7 +50,11 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadLevelWithResetAdventureMode(string name)
     {
-        PlayerSceneManager.playerManager.gameLevel = true;
+        MusicPlayer.instance.isBreaker = true;
+        MusicPlayer.instance.isMenue = false;
+        MusicPlayer.instance.isRaider = false;
+        PlayerSceneManager.playerManager.breakerLevel = true;
+        PlayerSceneManager.playerManager.raiderLevel = false;
         adventureMode = true;
         Reset();
         SceneManager.LoadScene(name);
@@ -38,7 +63,13 @@ public class LevelManager : MonoBehaviour {
     public void LoadLevelStartWithReset()
     {
         Reset();
-        PlayerSceneManager.playerManager.gameLevel = false;
+        MusicPlayer.instance.isMenue = true;
+        MusicPlayer.instance.isBreakerWon = false;
+        MusicPlayer.instance.isBreakerLost = false;
+        MusicPlayer.instance.isRaider = false;
+        MusicPlayer.instance.isBreaker = false;
+        PlayerSceneManager.playerManager.breakerLevel = false;
+        PlayerSceneManager.playerManager.raiderLevel = false;
         Cursor.visible = true;
         SceneManager.LoadScene("01a Start Menu");
     }
@@ -52,22 +83,29 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadNextLevel()
     {
-        PlayerPrefsManager.UnlockLevel(SceneManager.GetActiveScene().buildIndex - 7); //Not Sure if this is actually working right xD
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);        
     }
 
     public void QuitRequest()
     {
+        AccountDetailRequest.accReq.SaveBrickData();
+        AccountDetailRequest.accReq.SaveRaiderData();
+        AccountDetailRequest.accReq.SaveCashData();
 #if (UNITY_EDITOR || DEVELOPMENT_BUILD)
         Debug.Log(this.name + " : " + this.GetType() + " : " + System.Reflection.MethodBase.GetCurrentMethod().Name);
 #endif
 #if (UNITY_EDITOR)
         UnityEditor.EditorApplication.isPlaying = false;
 #elif (UNITY_STANDALONE)
+
     Application.Quit();
 #elif (UNITY_UWP)
+
+
         Application.Quit();
 #elif (UNITY_WEBGL)
+
+
     Application.OpenURL("about:blank");
 #else
         Application.Quit();
@@ -76,16 +114,20 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadLastLevel()
     {
-        PlayerSceneManager.playerManager.gameLevel = true;
+        PlayerSceneManager.playerManager.breakerLevel = true;
+        MusicPlayer.instance.isBreakerLost = false;
         Reset();
         SceneManager.LoadScene(checkpoint);
     }
 
     public void LoadInvaderLevel(string name)
     {
-        Reset();
-        PlayerSceneManager.playerManager.gameLevel = false;
+        MusicPlayer.instance.isRaider = true;
+        MusicPlayer.instance.isBreaker = false;
+        MusicPlayer.instance.isMenue = false;
+        PlayerSceneManager.playerManager.breakerLevel = false;
+        PlayerSceneManager.playerManager.raiderLevel = true;
         SceneWarp.checkpointScene = name;
-        SceneManager.LoadScene("01f SceneWarp");  
+        SceneManager.LoadScene("01d SceneWarp");  
     }
 }

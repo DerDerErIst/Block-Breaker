@@ -2,39 +2,49 @@
 
 public class PauseController : MonoBehaviour {
 
-    public GameObject pauseCanvas;
-    public GameObject pauseUI;
-    public GameObject settingsUI;
+    public GameObject optionUI;
 
-    OptionsController controller;
     LevelManager levelManager;
     AudioSource[] allAudioSources;
 
-    private void Start()
+    private void Awake()
     {
-        levelManager = FindObjectOfType<LevelManager>();
-        controller = GetComponent<OptionsController>();
+        DontDestroyOnLoad(this);
     }
 
+    private void Start()
+    {
+        optionUI.SetActive(false);
+    }
     void Update()
     {
         //Only for PC Version, Mobile Devices need to Use the Pause Button in ScreenView
         if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("Activate");
             OpenMenue();
         }
     }
 
-    public void ExitToStart()
+    public void ExitToLose()
     {
         Time.timeScale = 1f;
-        levelManager.LoadMenueStructure("03 Lose");    
+
+        //We Ask in what level we are to Save Datas to the Cloud if we Exit
+        if(PlayerSceneManager.playerManager.raiderLevel)
+        {
+            FindObjectOfType<ShipLiveSystem>().SavePlayerData();
+        }
+        if (PlayerSceneManager.playerManager.breakerLevel)
+        {
+            AccountDetailRequest.accReq.SaveBrickData();
+        }
+        levelManager = FindObjectOfType<LevelManager>();
+        levelManager.LoadLevelStartWithReset();    
     }
 
     public void OpenMenue()
     {
-        pauseCanvas.SetActive(!pauseCanvas.activeSelf);
+        optionUI.SetActive(!optionUI.activeSelf);
         TimeScale();
     }
 
@@ -57,25 +67,19 @@ public class PauseController : MonoBehaviour {
 
     private void TimeScale()
     {
-        if (!pauseCanvas.activeSelf)
+        if (!optionUI.activeSelf)
         {
             StartAudio();
-            controller.Save();
-            if (settingsUI)
+            if (PlayerSceneManager.playerManager.breakerLevel)
             {
                 Cursor.visible = false;
-                settingsUI.SetActive(false);
             }
             Time.timeScale = 1f;
         }
-        else if (pauseCanvas.activeSelf)
+        else if (optionUI.activeSelf)
         {
             StopAudio();
-            if (pauseUI)
-            {
-                Cursor.visible = true;
-                pauseUI.SetActive(true);
-            }
+            Cursor.visible = true;
             Time.timeScale = 0f;
         }
     }

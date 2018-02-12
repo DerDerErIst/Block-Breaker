@@ -46,9 +46,12 @@ public class GameSparksManager : MonoBehaviour {
                                 
                 if (!response.HasErrors)
                 {
-                    GetPlayerData();
+                    AccountDetailRequest.accReq.GetAccountData();
+                    AccountDetailRequest.accReq.GetBrickData();
+                    AccountDetailRequest.accReq.GetRaiderData();
+                    Invoke("LoadLevel", 2f);
                     Debug.Log("Device Authenticated...");
-                                    }
+                }
                 else
                 {
                     Debug.Log("Error Authenticating Device...");
@@ -64,7 +67,10 @@ public class GameSparksManager : MonoBehaviour {
                 {
                     if (!responses.HasErrors)
                     {
-                        GetPlayerData();
+                        AccountDetailRequest.accReq.GetAccountData();
+                        AccountDetailRequest.accReq.GetBrickData();
+                        AccountDetailRequest.accReq.GetRaiderData();
+                        Invoke("LoadLevel", 2f);
                         Debug.Log("Device Authenticated...");
                     }
                 }
@@ -72,31 +78,67 @@ public class GameSparksManager : MonoBehaviour {
                 {
                     Debug.Log("Error Authenticating Device...");
                     Debug.Log("New Player");
+                    SetupNewPlayer();
                     registerName.SetActive(true);
                 }
             });
     }
 
-    void GetPlayerData()
+    void SetupNewPlayer()
     {
-        new GameSparks.Api.Requests.LogEventRequest()
-            .SetEventKey("LOAD_BRICKS")            
+        if (GameSparksManager.instance)
+        {
+            new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("SAVE_BRICK")
+                .SetEventAttribute("BRICK", 0)
+                .SetEventAttribute("SCORE_ALL", 0)
+                .SetEventAttribute("HIGHSCORE", 0)
                 .Send((response) => {
 
                     if (!response.HasErrors)
                     {
-                        Debug.Log("Recieved Load Bricks Data From GameSparks...");
-                        GSData data = response.ScriptData.GetGSData("brick_Data");
-                        playerManager.player.brickCounter = (int)data.GetInt("destroyedBricks"); //Mark as Int working
-                        playerManager.player.score = (int)data.GetInt("score");
-                        playerManager.player.highscore = (int)data.GetInt("highscore");                        
-                        playerManager.player.playerName = (string)data.GetString("playerDisplay");
-                        Invoke("LoadLevel", 2f);
+                        Debug.Log("Brick Posted Sucessfully...");
                     }
                     else
                     {
-                        Debug.Log("Error Loading Player Data...");
+                        Debug.Log("Error Posting Score...");
                     }
                 });
+            new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("GRANT_CURRENCY")
+                .SetEventAttribute("CASH", 100)
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Currency Posted Sucessfully...");
+                        AccountDetailRequest.accReq.GetAccountData();
+                    }
+                    else
+                    {
+                        Debug.Log("Error Currency Score...");
+                    }
+                });
+            new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("SAVE_RAIDER")
+                .SetEventAttribute("ASTEROIDS_DESTROYED", 0)
+                .SetEventAttribute("ASTEROIDS_DESTROYED_INROW", 0)
+                .SetEventAttribute("HIGHEST_DIFFICULT", 0)
+                .SetEventAttribute("TIME_NORMAL", 0)
+                .SetEventAttribute("TIME_DOUBLE", 0)
+                .SetEventAttribute("TIME_STRONG", 0)
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Raider Posted Sucessfully...");
+                        AccountDetailRequest.accReq.GetAccountData();
+                    }
+                    else
+                    {
+                        Debug.Log("Error Raider Scores...");
+                    }
+                });
+        }
     }
 }

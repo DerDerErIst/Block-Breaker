@@ -11,6 +11,10 @@ public class OptionsController : MonoBehaviour
 
     public Toggle toggleFullscren;
     public Toggle fogToggle;
+    public Toggle tutorialToggle;
+    public Toggle planetToggle;
+    public Toggle nebulaToggle;
+    public Toggle specialEffectToggle;
 
     public AudioMixer audioMixer;
 
@@ -19,14 +23,19 @@ public class OptionsController : MonoBehaviour
 
     Resolution[] resolutions;
 
-
-    void Start()
+    private void Awake()
     {
         masterSlider.value = PlayerPrefsManager.GetMasterVolume();
         musicSlider.value = PlayerPrefsManager.GetMusicVolume();
         effectSlider.value = PlayerPrefsManager.GetEffectVolume();
+
         toggleFullscren.isOn = (PlayerPrefsManager.GetFullscreen() == 0);
         fogToggle.isOn = (PlayerPrefsManager.GetFogSetting() == 0);
+        tutorialToggle.isOn = (PlayerPrefsManager.GetTutorialSetting() == 1);
+        planetToggle.isOn = (PlayerPrefsManager.GetPlanetSetting() == 1);
+        nebulaToggle.isOn = (PlayerPrefsManager.GetNebulaSetting() == 1);
+        specialEffectToggle.isOn = (PlayerPrefsManager.GetSpecialEffectSetting() == 1);
+
         qualityLevel.value = PlayerPrefsManager.GetGraphicQuality();
 
         resolutions = Screen.resolutions;
@@ -58,13 +67,74 @@ public class OptionsController : MonoBehaviour
         fogToggle.isOn = isFog;
         if (isFog)
         {
-            FogDisable.fogDisable.disable = true;
             PlayerPrefsManager.SetFogSetting(0);
+            GraphicDisable.graphicDisable.fogDisable = true;
         }
         else if (!isFog)
         {
-            FogDisable.fogDisable.disable = false;
             PlayerPrefsManager.SetFogSetting(1);
+            GraphicDisable.graphicDisable.fogDisable = false;
+
+        }
+    }
+
+    public void SetTutorial(bool isTutorial)
+    {
+        tutorialToggle.isOn = isTutorial;
+        if (isTutorial)
+        {
+            PlayerPrefsManager.SetTutorialSetting(1);
+            GraphicDisable.graphicDisable.tutorialDisable = false;
+        }
+        else if (!isTutorial)
+        {
+            PlayerPrefsManager.SetTutorialSetting(0);
+            GraphicDisable.graphicDisable.tutorialDisable = true;
+        }
+    }
+
+    public void SetPlanet(bool isPlanet)
+    {
+        planetToggle.isOn = isPlanet;
+        if (isPlanet)
+        {
+            PlayerPrefsManager.SetPlanetSetting(1);
+            GraphicDisable.graphicDisable.planetDisable = false;
+        }
+        else if (!isPlanet)
+        {
+            PlayerPrefsManager.SetPlanetSetting(0);
+            GraphicDisable.graphicDisable.planetDisable = true;
+        }
+    }
+
+    public void SetNebula(bool isNebula)
+    {
+        nebulaToggle.isOn = isNebula;
+        if (isNebula)
+        {
+            PlayerPrefsManager.SetNebulaSetting(1);
+            GraphicDisable.graphicDisable.nebulaDisable = false;
+        }
+        else if (!isNebula)
+        {
+            PlayerPrefsManager.SetNebulaSetting(0);
+            GraphicDisable.graphicDisable.nebulaDisable = true;
+        }
+    }
+
+    public void SetSpecialEffect(bool isSpecialEffect)
+    {
+        specialEffectToggle.isOn = isSpecialEffect;
+        if (isSpecialEffect)
+        {
+            PlayerPrefsManager.SetSpecialEffectSetting(1);
+            GraphicDisable.graphicDisable.specialEffectsDisable = false;
+        }
+        else if (!isSpecialEffect)
+        {
+            PlayerPrefsManager.SetSpecialEffectSetting(0);
+            GraphicDisable.graphicDisable.specialEffectsDisable = true;
         }
     }
 
@@ -77,16 +147,21 @@ public class OptionsController : MonoBehaviour
     public void SetMasterVolume()
     {
         audioMixer.SetFloat("masterVolume", masterSlider.value);
+        PlayerPrefsManager.SetMasterVolume(masterSlider.value);
     }
 
     public void SetMusicVolume()
     {
         audioMixer.SetFloat("musicVolume", musicSlider.value);
+        PlayerPrefsManager.SetMusicVolume(musicSlider.value);
+
     }
 
     public void SetEffectVolume()
     {
         audioMixer.SetFloat("effectVolume", effectSlider.value);
+        PlayerPrefsManager.SetEffectVolume(effectSlider.value);
+
     }
 
     public void SetQuality(int qualityIndex)
@@ -108,19 +183,10 @@ public class OptionsController : MonoBehaviour
         }
     }
 
-    public void Save()
-    {
-        PlayerPrefsManager.SetMasterVolume(masterSlider.value);
-        PlayerPrefsManager.SetMusicVolume(musicSlider.value);
-        PlayerPrefsManager.SetEffectVolume(effectSlider.value);
-
-    }
-
     public void SetDefaults()
-    {
+    {   //TODO Setup a Default Button
         masterSlider.value = -20f;
         musicSlider.value = -20f;
         effectSlider.value = -20f;
-        Save();
     }
 }

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using System;
 
 public class PlayerSceneManager : MonoBehaviour
 {
@@ -21,10 +22,8 @@ public class PlayerSceneManager : MonoBehaviour
         audioMixer.SetFloat("effectVolume", PlayerPrefsManager.GetEffectVolume());
     }
 
-    public bool gameLevel;
-
-    public Player player;
-    public GameObject playerBallInspector;
+    public bool breakerLevel;
+    public bool raiderLevel;
 
     public GameObject playerBall;
     public GameObject playerPaddle;
@@ -33,14 +32,29 @@ public class PlayerSceneManager : MonoBehaviour
     public static int lives = 3;
     public static int score = 0;
     public int earnedSpaceBricks = 0;
+    public int actualAsteroids = 0;
+
     Text scoreText = null;
     Text liveText = null;
+    Text playerNameText = null;
+    Text spaceBricksText = null;
+    Text asteroidsDestroyedText = null;
+    Text bricksEarnedText = null;
 
     [Header("Get This Data from Cloud")]
     public string playerName = null;
-    public int spacebricksCurrency = 0;    
-    Text playerNameText = null;
-    Text spaceBricksText = null;
+    public int spacebricksCurrency = 0;
+    public int breakerHighscore = 0;
+    public int breakerOverallScore = 0;
+    public int destroyedBricks = 0;
+
+    public int destroyedAsteroids = 0;
+    public int destroyedAsteroidsInRow = 0;
+    public int highestDifficultInRaider = 0;
+    public float longestTimeInRaiderWithNormal = 0f;
+    public float longestTimeInRaiderWithDouble = 0f;
+    public float longestTimeInRaiderWithStrong = 0f;
+
 
     [Header("PADDLE Cloud Data")]
     public bool PADDLE_RECTANGLE = true;
@@ -67,18 +81,19 @@ public class PlayerSceneManager : MonoBehaviour
 
     void EnablePlayerManager(Scene scene, LoadSceneMode mode)
     {
-        if(gameLevel)
+        if(breakerLevel)
         {
-            Instantiate(playerPaddle, new Vector3(10f, 0f, 0f), Quaternion.identity);
+            Instantiate(playerPaddle, new Vector3(0f, 0f, 0f), Quaternion.identity);
         }
         if (FindObjectOfType<FindShipPosition>())
         {
-            GameObject Ship = Instantiate(playerShip, FindObjectOfType<FindShipPosition>().transform.position, Quaternion.identity);
+            Transform transformShipPosition = FindObjectOfType<FindShipPosition>().gameObject.transform;
+            GameObject Ship = Instantiate(playerShip, transformShipPosition.position, Quaternion.identity);
             Ship.transform.SetParent(FindObjectOfType<FindShipPosition>().transform);
         }
         if (FindObjectOfType<FindPlayerNameText>())
         {
-            SetupPlayerName();
+            SetupPlayerNameDisplay();
         }
         else
         {
@@ -86,7 +101,7 @@ public class PlayerSceneManager : MonoBehaviour
         }
         if (FindObjectOfType<FindSpaceBrickText>())
         {
-            SetupSpaceBrickText();
+            SetupSpaceBrickDisplay();
         }
         else
         {
@@ -101,15 +116,32 @@ public class PlayerSceneManager : MonoBehaviour
         {
             Debug.LogWarning("No Game Display to Set in Scene");
         }
+
+        if(FindObjectOfType<FindAsteroidText>() && FindObjectOfType<FindBrickEarnedText>())
+        {
+            SetupAsteroidDisplay();
+        }
+        else
+        {
+            Debug.LogWarning("No Asteroid Display to Set in Scene");
+        }
     }
 
-    void SetupSpaceBrickText()
+    private void SetupAsteroidDisplay()
+    {
+        asteroidsDestroyedText = FindObjectOfType<FindAsteroidText>().GetComponent<Text>();
+        asteroidsDestroyedText.text = actualAsteroids.ToString();
+        bricksEarnedText = FindObjectOfType<FindBrickEarnedText>().GetComponent<Text>();
+        bricksEarnedText.text = earnedSpaceBricks.ToString();
+    }
+
+    void SetupSpaceBrickDisplay()
     {
         spaceBricksText = FindObjectOfType<FindSpaceBrickText>().GetComponent<Text>();
         spaceBricksText.text = spacebricksCurrency.ToString();
     }
 
-    void SetupPlayerName()
+    void SetupPlayerNameDisplay()
     {
         playerNameText = FindObjectOfType<FindPlayerNameText>().GetComponent<Text>();
         playerNameText.text = playerName;
@@ -129,14 +161,20 @@ public class PlayerSceneManager : MonoBehaviour
         liveText.text = lives.ToString();
     }
 
-    public void UpdateSpaceBrickText()
+    public void UpdateSpaceBrickDisplay()
     {
-        spaceBricksText.text = spacebricksCurrency.ToString();
+        if (spaceBricksText != null)
+        {
+            spaceBricksText.text = spacebricksCurrency.ToString();
+        }
     }
 
-    private void Start()
+    public void UpdateAsteroidsDisplay()
     {
-        FogDisable.fogDisable.disable = (PlayerPrefsManager.GetFogSetting() == 0);
-        playerBall = playerBallInspector;
+        if (asteroidsDestroyedText != null && bricksEarnedText != null)
+        {
+            asteroidsDestroyedText.text = actualAsteroids.ToString();
+            bricksEarnedText.text = earnedSpaceBricks.ToString();
+        }
     }
 }

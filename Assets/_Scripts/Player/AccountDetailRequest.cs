@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using GameSparks.Core;
 
 public class AccountDetailRequest : MonoBehaviour
 {
@@ -7,8 +8,10 @@ public class AccountDetailRequest : MonoBehaviour
     private void Awake()
     {
         accReq = this;
-        GetAccountData();        
+        playerManager = GetComponent<PlayerSceneManager>();                
     }
+
+    PlayerSceneManager playerManager;
 
     public void GetAccountData()
     {
@@ -54,7 +57,7 @@ public class AccountDetailRequest : MonoBehaviour
                         PlayerSceneManager.playerManager.BALL_PURPLE = false;
 
                     }
-                    PlayerSceneManager.playerManager.UpdateSpaceBrickText();
+                    PlayerSceneManager.playerManager.UpdateSpaceBrickDisplay();
                 }
                 else
                 {
@@ -63,7 +66,134 @@ public class AccountDetailRequest : MonoBehaviour
             });
     }
 
-    public void GivePlayerMoreCashBttn()
+    public void GetBrickData()
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+            .SetEventKey("LOAD_BRICKS")
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Recieved Load Bricks Data From GameSparks...");
+                        GSData data = response.ScriptData.GetGSData("brick_Data");
+                        playerManager.destroyedBricks = (int)data.GetInt("destroyedBricks"); //Mark as Int working
+                        playerManager.breakerOverallScore = (int)data.GetInt("score");
+                        playerManager.breakerHighscore = (int)data.GetInt("highscore");
+                    }
+                    else
+                    {
+                        Debug.Log("Error Loading Brick Data...");
+                    }
+                });
+    }
+
+    public void GetRaiderData()
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+            .SetEventKey("LOAD_RAIDER")
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Recieved Load Raider Data From GameSparks...");
+                        GSData data = response.ScriptData.GetGSData("raider_Data");
+                        playerManager.destroyedAsteroids = (int)data.GetInt("asteroidsDestroyed"); //Mark as Int working
+                        playerManager.destroyedAsteroidsInRow = (int)data.GetInt("asteroidsDestroyedInRow");
+                        playerManager.highestDifficultInRaider = (int)data.GetInt("highestDifficult");
+                        int difficult = (int)data.GetInt("highestDifficult");
+                        Debug.Log(difficult);
+
+                        float resultNormal = 0;
+                        string timeNormal = data.GetString("timeNormal");                        
+                        float.TryParse(timeNormal, out resultNormal);
+                        
+                        playerManager.longestTimeInRaiderWithNormal = resultNormal;
+
+                        float resultDouble = 0;
+                        string timeDouble = data.GetString("timeDouble");
+                        float.TryParse(timeDouble, out resultDouble);
+
+                        playerManager.longestTimeInRaiderWithDouble = resultDouble;
+
+                        float resultStrong = 0;
+                        string timeStrong = data.GetString("timeStrong");
+                        float.TryParse(timeStrong, out resultStrong);
+
+                        playerManager.longestTimeInRaiderWithStrong = resultStrong;
+                    }
+                    else
+                    {
+                        Debug.Log("Error Loading Raider Data...");
+                    }
+                });
+    }
+
+    public void SaveBrickData()
+    {
+
+        new GameSparks.Api.Requests.LogEventRequest()
+            .SetEventKey("SAVE_BRICK")
+            .SetEventAttribute("BRICK", playerManager.destroyedBricks)
+            .SetEventAttribute("SCORE_ALL", playerManager.breakerOverallScore)
+            .SetEventAttribute("HIGHSCORE", playerManager.breakerHighscore)
+            .Send((response) =>
+            {
+
+                if (!response.HasErrors)
+                {
+                    Debug.Log("Brick Posted Sucessfully...");
+                }
+                else
+                {
+                    Debug.Log("Error Posting Score...");
+                }
+            });
+    }
+
+    public void SaveRaiderData()
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("SAVE_RAIDER")
+                .SetEventAttribute("ASTEROIDS_DESTROYED", playerManager.destroyedAsteroids)
+                .SetEventAttribute("ASTEROIDS_DESTROYED_INROW", playerManager.destroyedAsteroidsInRow)
+                .SetEventAttribute("HIGHEST_DIFFICULT", playerManager.highestDifficultInRaider)
+                .SetEventAttribute("TIME_NORMAL", playerManager.longestTimeInRaiderWithNormal.ToString())
+                .SetEventAttribute("TIME_DOUBLE", playerManager.longestTimeInRaiderWithDouble.ToString())
+                .SetEventAttribute("TIME_STRONG", playerManager.longestTimeInRaiderWithStrong.ToString())
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Raider Posted Sucessfully...");
+                        AccountDetailRequest.accReq.GetAccountData();
+                    }
+                    else
+                    {
+                        Debug.Log("Error Raider Scores...");
+                    }
+                });
+    }
+
+    public void SaveCashData()
+    {
+        new GameSparks.Api.Requests.LogEventRequest()
+                .SetEventKey("GRANT_CURRENCY")
+                .SetEventAttribute("CASH", playerManager.earnedSpaceBricks)
+                .Send((response) => {
+
+                    if (!response.HasErrors)
+                    {
+                        Debug.Log("Currency Posted Sucessfully...");
+                        AccountDetailRequest.accReq.GetAccountData();
+                    }
+                    else
+                    {
+                        Debug.Log("Error Currency Score...");
+                    }
+                });
+    }
+
+    public void GivePlayerMoreCash()
     {
         Debug.Log("Adding More Cash...");
         new GameSparks.Api.Requests.LogEventRequest()

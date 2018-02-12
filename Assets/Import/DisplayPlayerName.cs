@@ -9,7 +9,7 @@ public class DisplayPlayerName : MonoBehaviour {
     {
         playerManager = FindObjectOfType<PlayerSceneManager>();
         TextMeshProUGUI textmeshPro = GetComponent<TextMeshProUGUI>();
-        textmeshPro.SetText("Welcome " + playerManager.player.playerName);
+        textmeshPro.SetText("Welcome " + playerManager.playerName);
     }
 	
 

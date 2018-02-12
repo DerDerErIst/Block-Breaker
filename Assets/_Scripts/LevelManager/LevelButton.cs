@@ -6,9 +6,9 @@ public class LevelButton : MonoBehaviour
     string nextLevelString;
     Button button;
 
-	public void SetLevel(int level)
+	public void SetLevel(string level)
     {
-        nextLevelString = "02 Level_" + level.ToString(); //TODO think about how to Solve This without that stupid Strings
+        nextLevelString = level; //TODO think about how to Solve This without that stupid Strings
         SetButton();
     }
 
